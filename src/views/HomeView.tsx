@@ -1,9 +1,9 @@
-"use client";
-
+// Server Component: ทั้งหน้าอยู่ใน HTML ให้ Google และ AI อ่านได้
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { ArrowIcon } from "@/components/Icons";
 import { C } from "@/services/data";
+import { projectByZone } from "@/services/knowledge";
 import { fmt } from "@/utils/format";
 import { projectImg, yieldOf } from "@/utils/project";
 
@@ -42,14 +42,14 @@ export function HomeView() {
             const p = C.PROJECTS[z];
             const s = p.stations[0];
             return (
-              <div className="proj" key={z}>
+              <Link className="proj" key={z} href={`/projects/${projectByZone(z).slug}`} style={{ color: "inherit", textDecoration: "none" }}>
                 <div className="ph"><img src={projectImg(z)} alt={`ภาพอาคาร ${p.name}`} loading="lazy" /></div>
                 <div className="bd">
                   <b>{p.name}</b>
                   <span>{s ? `${s.name} ${fmt(s.m)} ม.` : ""} · {fmt(p.unitCount)} ยูนิต</span>
                   <span>Gross yield {yieldOf(z)} <span className="pill mock" style={{ fontSize: ".66rem" }}>ประมาณการ</span></span>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>

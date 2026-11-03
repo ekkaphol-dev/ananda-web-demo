@@ -1,10 +1,10 @@
 "use client";
 
-import { useApp } from "@/hooks/useApp";
+import { useAppMaybe } from "@/hooks/useApp";
 import { useToast } from "@/hooks/useToast";
 
 export function DemoBar() {
-  const { reset } = useApp();
+  const app = useAppMaybe();
   const toast = useToast();
   return (
     <div id="demo-bar" role="status">
@@ -15,7 +15,7 @@ export function DemoBar() {
           id="reset-btn"
           type="button"
           onClick={() => {
-            reset();
+            app?.reset();
             toast("รีเซ็ตข้อมูลตัวอย่างแล้ว");
           }}
         >

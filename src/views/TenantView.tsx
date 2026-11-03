@@ -4,13 +4,15 @@ import { useMemo, useRef, useState, type FormEvent } from "react";
 import { ActionBar } from "@/components/ActionBar";
 import { RoomCard } from "@/components/RoomCard";
 import { RoomDetailModal } from "@/components/RoomDetailModal";
+import { ClientReady } from "@/components/ClientReady";
 import { useApp } from "@/hooks/useApp";
+import { trackEvent } from "@/services/analytics";
 import { C, M } from "@/services/data";
 import { ZN } from "@/utils/project";
 
 const toggle = (arr: string[], v: string) => (arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
 
-export function TenantView() {
+function TenantBody() {
   const { state, ui, setUi } = useApp();
   const q = ui.tq;
   const [detail, setDetail] = useState<string | null>(null);
@@ -30,7 +32,10 @@ export function TenantView() {
     [state.rooms, q],
   );
 
-  const toggleRoom = (id: string) => setUi((u) => ({ selRooms: toggle(u.selRooms, id) }));
+  const toggleRoom = (id: string) => {
+    if (!ui.selRooms.includes(id)) trackEvent("select_item", { item_list_name: "tenant_rooms", item_id: id });
+    setUi((u) => ({ selRooms: toggle(u.selRooms, id) }));
+  };
   const chip = (key: "zones" | "types" | "lifestyle", v: string) => setDraft((d) => ({ ...d, [key]: toggle(d[key], v), persona: null }));
 
   function search(e: FormEvent) {
@@ -38,6 +43,7 @@ export function TenantView() {
     const budgetMin = Math.max(0, Number(form.bmin) || 0);
     const budgetMax = Math.max(budgetMin, Number(form.bmax) || budgetMin);
     setUi({ tq: { ...draft, budgetMin, budgetMax, moveIn: form.moveIn || draft.moveIn, commute: form.commute }, searched: true });
+    trackEvent("search", { search_term: "tenant_rooms", budget_min: budgetMin, budget_max: budgetMax, zones: draft.zones.join(",") });
     resRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -45,12 +51,7 @@ export function TenantView() {
 
   return (
     <>
-      <section className="wrap section">
-        <div className="sec-head">
-          <div className="eyebrow">สำหรับผู้เช่า</div>
-          <h1>บอกโจทย์ แล้วได้ห้องที่ตรงที่สุด</h1>
-          <p className="muted">เลือกห้องที่สนใจได้หลายห้อง แล้วกดลงทะเบียนนัดดู ทีมเช่าจะติดต่อกลับ</p>
-        </div>
+      <section className="wrap section" style={{ paddingTop: 0 }}>
         <div className="split">
           <form className="card side stack" onSubmit={search} noValidate>
             <h3>ความต้องการของคุณ</h3>
@@ -126,6 +127,24 @@ export function TenantView() {
       {detailRoom && (
         <RoomDetailModal room={detailRoom} q={q} selected={ui.selRooms.includes(detailRoom.id)} onToggle={() => toggleRoom(detailRoom.id)} onClose={() => setDetail(null)} />
       )}
+    </>
+  );
+}
+
+// หัวข้อหน้าเรนเดอร์ฝั่ง server (ให้ Google อ่านได้) ส่วนที่ใช้ข้อมูลเรนเดอร์หลังโหลดในเบราว์เซอร์
+export function TenantView() {
+  return (
+    <>
+      <section className="wrap section" style={{ paddingBottom: 0 }}>
+        <div className="sec-head">
+          <div className="eyebrow">สำหรับผู้เช่า</div>
+          <h1>บอกโจทย์ แล้วได้ห้องที่ตรงที่สุด</h1>
+          <p className="muted">เลือกห้องที่สนใจได้หลายห้อง แล้วกดลงทะเบียนนัดดู ทีมเช่าจะติดต่อกลับ</p>
+        </div>
+      </section>
+      <ClientReady fallback={<section className="wrap section" style={{ paddingTop: 0 }}><div className="card empty small">กำลังโหลดห้องที่ตรงกับคุณ…</div></section>}>
+        <TenantBody />
+      </ClientReady>
     </>
   );
 }

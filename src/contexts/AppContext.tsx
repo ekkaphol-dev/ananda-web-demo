@@ -73,6 +73,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [state, ui, setUi, reset],
   );
 
-  if (!value) return null;
+  // ไม่ซ่อน children ระหว่างรอข้อมูล เพื่อให้เนื้อหาที่ไม่ต้องใช้ข้อมูล (หน้าหลัก หัวข้อหน้า) ถูกเรนเดอร์ฝั่ง server ให้ Google อ่านได้
+  // ส่วนที่ต้องใช้ข้อมูลห่อด้วย <ClientReady> แทน
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

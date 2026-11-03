@@ -7,7 +7,9 @@ import { ContactForm } from "@/components/ContactForm";
 import { EmptyState } from "@/components/EmptyState";
 import { useApp } from "@/hooks/useApp";
 import { C, M } from "@/services/data";
+import { trackLead } from "@/services/analytics";
 import { addLead } from "@/store/umStore";
+import { getAttribution } from "@/utils/attribution";
 import { fmt, thDate } from "@/utils/format";
 import { roomImg } from "@/utils/project";
 
@@ -40,11 +42,12 @@ export function TenantRegisterView() {
             const note = String(new FormData(form).get("note") ?? "").trim();
             const lead = mutate((s) =>
               addLead(s, "rent", {
-                name: v.name, phone: v.phone, email: v.email, contactTime: v.contactTime, note,
+                name: v.name, phone: v.phone, email: v.email, contactTime: v.contactTime, attribution: getAttribution(), note,
                 items: ui.selRooms.slice(),
                 profile: { ...q, types: q.types.slice(), zones: q.zones.slice(), lifestyle: q.lifestyle.slice() },
               }),
             );
+            trackLead("rent", lead.ref, ui.selRooms.length);
             setUi({ lastLead: lead, selRooms: [] });
             router.push("/tenant/done");
           }}

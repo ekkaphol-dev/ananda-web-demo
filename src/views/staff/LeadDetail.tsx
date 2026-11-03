@@ -9,6 +9,7 @@ import { C, M } from "@/services/data";
 import { LOST_REASONS } from "@/store/constants";
 import type { Lead } from "@/store/types";
 import { findUser, updateLead } from "@/store/umStore";
+import { attributionLabel } from "@/utils/attribution";
 import { fmt, maskPhone, rel, thDate } from "@/utils/format";
 import { demandFor, projectImg, roomImg, statusList, yieldOf, ZN } from "@/utils/project";
 
@@ -71,6 +72,11 @@ export function LeadDetail({ lead: l }: { lead: Lead }) {
           สะดวก {l.contactTime || "-"}
           {l.side === "invest" ? ` · งบ ${l.budget} · ${l.purpose}` : ` · งบ ${fmt(l.profile.budgetMin)}–${fmt(l.profile.budgetMax)} · ย้ายเข้า ${thDate(l.profile.moveIn)}`}
         </span>
+        {l.attribution && (
+          <span className="small muted" title={l.attribution.gclid ? `gclid: ${l.attribution.gclid}` : undefined}>
+            ที่มา: {attributionLabel(l.attribution)}{l.attribution.landing ? ` · เข้าหน้า ${l.attribution.landing}` : ""}
+          </span>
+        )}
       </div>
 
       <div className="stack" style={{ gap: 6 }}>

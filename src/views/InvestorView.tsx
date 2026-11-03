@@ -3,6 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { ActionBar } from "@/components/ActionBar";
 import { CalcBox } from "@/components/CalcBox";
+import { ClientReady } from "@/components/ClientReady";
 import { useApp } from "@/hooks/useApp";
 import { C } from "@/services/data";
 import { fmt } from "@/utils/format";
@@ -10,7 +11,7 @@ import { calcInit, demandFor, netYieldOf, projectImg, yieldOf, ZN, zoneOf } from
 
 type Persona = { name_th: string; occupation?: string; rent_budget_thb: { min: number; max: number } };
 
-export function InvestorView() {
+function InvestorBody() {
   const { state, ui, setUi } = useApp();
   const z = ui.invZone as keyof typeof C.PROJECTS;
   const p = C.PROJECTS[z];
@@ -19,12 +20,7 @@ export function InvestorView() {
 
   return (
     <>
-      <section className="wrap section">
-        <div className="sec-head">
-          <div className="eyebrow">สำหรับเจ้าของห้อง · Demand Board</div>
-          <h1>เห็นคิวผู้เช่าจริง ก่อนตัดสินใจซื้อ</h1>
-          <p className="muted">เลือกโครงการและแบบห้องที่สนใจได้หลายแบบ แล้วกรอกข้อมูลให้เซลส์ส่ง Unit Report และนัดชม</p>
-        </div>
+      <section className="wrap section" style={{ paddingTop: 0 }}>
         <div className="tabs" role="tablist">
           {C.ZONE_IDS.map((id) => (
             <button key={id} className="tab" role="tab" aria-selected={id === z} onClick={() => setUi({ invZone: id })}>{ZN[id]}</button>
@@ -97,6 +93,24 @@ export function InvestorView() {
         </p>
       </section>
       <ActionBar count={ui.selUnits.length} prefix="สนใจ" unit="แบบห้อง" href="/investor/register" cta="ให้เซลส์ติดต่อกลับ" />
+    </>
+  );
+}
+
+// หัวข้อหน้าเรนเดอร์ฝั่ง server (ให้ Google อ่านได้) ส่วนที่ใช้ข้อมูลเรนเดอร์หลังโหลดในเบราว์เซอร์
+export function InvestorView() {
+  return (
+    <>
+      <section className="wrap section" style={{ paddingBottom: 0 }}>
+        <div className="sec-head">
+          <div className="eyebrow">สำหรับเจ้าของห้อง · Demand Board</div>
+          <h1>เห็นคิวผู้เช่าจริง ก่อนตัดสินใจซื้อ</h1>
+          <p className="muted">เลือกโครงการและแบบห้องที่สนใจได้หลายแบบ แล้วกรอกข้อมูลให้เซลส์ส่ง Unit Report และนัดชม</p>
+        </div>
+      </section>
+      <ClientReady fallback={<section className="wrap section" style={{ paddingTop: 0 }}><div className="card empty small">กำลังโหลด Demand Board…</div></section>}>
+        <InvestorBody />
+      </ClientReady>
     </>
   );
 }

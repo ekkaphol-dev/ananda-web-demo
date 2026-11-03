@@ -269,3 +269,16 @@ table.rep tr.tot td{font-weight:700;background:#FAFBFE}
 .sbar i.rent,.lg.rent{background:var(--blue)}
 .sbar i.inv,.lg.inv{background:var(--green)}
 .lg{display:inline-block;width:10px;height:10px;border-radius:3px;margin:0 4px 0 10px;vertical-align:middle}
+
+/* ---------- แบนเนอร์ขอความยินยอมคุกกี้ (Next.js) */
+.consent{position:fixed;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:60;padding-inline:16px;display:flex;justify-content:center}
+.consent .card{max-width:900px;width:100%;box-shadow:0 10px 30px rgba(11,26,68,.18);flex-wrap:wrap;gap:12px}
+/* หน้าที่มีแถบปุ่มด้านล่าง (เลือกห้อง/แบบห้องแล้ว) ยกแบนเนอร์ขึ้น ไม่ให้บังปุ่มลงทะเบียน */
+body:has(.actionbar) .consent{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+/* FAQ / แหล่งข้อมูล (details) */
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-weight:700;color:var(--blue)}
+.faq[open] summary::after{content:"–"}
+.site-footer{border-top:1px solid var(--line);background:var(--card);padding-block:20px;margin-top:24px}
+.site-footer a{color:var(--ink)}

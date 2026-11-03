@@ -46,6 +46,8 @@ type LeadBase = {
   createdAt: string;
   contactTime: string;
   consentAt?: string;
+  /** ที่มาของลีด (gclid / UTM) ใช้วัดผลแคมเปญ */
+  attribution?: import("@/utils/attribution").Attribution;
   note: string;
   reason: string;
   matchConfirmed?: boolean;

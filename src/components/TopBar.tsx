@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useApp } from "@/hooks/useApp";
+import { useAppMaybe } from "@/hooks/useApp";
 import { MarkIcon } from "./Icons";
 
 const ITEMS: [string, string, string][] = [
@@ -13,7 +13,7 @@ const ITEMS: [string, string, string][] = [
 
 export function TopBar() {
   const path = usePathname();
-  const { me } = useApp();
+  const me = useAppMaybe()?.me;
   const on = (h: string) => (h === "/" ? path === "/" : path.startsWith(h));
   return (
     <header id="topbar">

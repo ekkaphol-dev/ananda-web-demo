@@ -8,7 +8,9 @@ import { EmptyState } from "@/components/EmptyState";
 import { useApp } from "@/hooks/useApp";
 import { C } from "@/services/data";
 import { INVEST_BUDGETS, INVEST_PURPOSES } from "@/store/constants";
+import { trackLead } from "@/services/analytics";
 import { addLead } from "@/store/umStore";
+import { getAttribution } from "@/utils/attribution";
 import { demandFor, projectImg, ZN } from "@/utils/project";
 
 export function InvestorRegisterView() {
@@ -51,10 +53,11 @@ export function InvestorRegisterView() {
             const fd = new FormData(form);
             const lead = mutate((s) =>
               addLead(s, "invest", {
-                name: v.name, phone: v.phone, email: v.email, contactTime: v.contactTime,
+                name: v.name, phone: v.phone, email: v.email, contactTime: v.contactTime, attribution: getAttribution(),
                 budget: String(fd.get("budget")), purpose: String(fd.get("purpose")), items,
               }),
             );
+            trackLead("invest", lead.ref, items.length);
             setUi({ lastLead: lead, selUnits: [] });
             router.push("/investor/done");
           }}

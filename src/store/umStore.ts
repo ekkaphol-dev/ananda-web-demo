@@ -70,8 +70,8 @@ function nextAssignee(s: AppState, side: Side) {
   return pool[k].id;
 }
 
-export type NewRentLead = Pick<RentLead, "name" | "phone" | "email" | "contactTime" | "note" | "items" | "profile">;
-export type NewInvestLead = Pick<InvestLead, "name" | "phone" | "email" | "contactTime" | "items" | "budget" | "purpose">;
+export type NewRentLead = Pick<RentLead, "name" | "phone" | "email" | "contactTime" | "note" | "items" | "profile" | "attribution">;
+export type NewInvestLead = Pick<InvestLead, "name" | "phone" | "email" | "contactTime" | "items" | "budget" | "purpose" | "attribution">;
 
 export function addLead(s: AppState, side: "rent", data: NewRentLead): Lead;
 export function addLead(s: AppState, side: "invest", data: NewInvestLead): Lead;
