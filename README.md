@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ananda Urban Match · Next.js (เดโม)
 
-## Getting Started
+พอร์ตจาก `03_WEBAPP_FINAL` (HTML/JS ล้วน) มาเป็น Next.js 16 + React 19 + TypeScript
+หน้าตา ข้อมูล และตรรกะเหมือนต้นฉบับทุกหน้า ข้อมูลลีดยังเก็บใน localStorage ของเบราว์เซอร์ (ยังไม่เชื่อมระบบจริง)
 
-First, run the development server:
+## วิธีรัน
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run build && npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+บัญชีทีมงานเดโม (รหัสผ่าน `demo1234`): `admin@urbanmatch.demo`, `invest1@urbanmatch.demo`, `rent1@urbanmatch.demo`
+ก่อนโชว์ทุกครั้งกด "รีเซ็ตข้อมูลตัวอย่าง" มุมขวาบน
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## หน้า (routes)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| URL | หน้า |
+|---|---|
+| `/` | หน้าหลัก |
+| `/tenant` → `/tenant/register` → `/tenant/done` | ผู้เช่า: หาห้อง → ลงทะเบียน → ได้เลขอ้างอิง |
+| `/investor` → `/investor/register` → `/investor/done` | เจ้าของห้อง: Demand Board → ให้เซลส์ติดต่อ → ได้เลขอ้างอิง |
+| `/staff` | คอนโซลทีมงาน (แอดมิน / Sale เจ้าของห้อง / Sale ผู้เช่า) |
 
-## Learn More
+## โครงสร้างโฟลเดอร์
 
-To learn more about Next.js, take a look at the following resources:
+```
+public/assets/        ภาพโครงการ ภาพห้อง ภาพ 360°
+src/
+├─ app/               Next.js routes (ไฟล์บาง ๆ เรียก view จาก src/views)
+├─ assets/            ไฟล์ static ที่ bundle ไปกับโค้ด (ฟอนต์ Prompt)
+├─ components/        UI ที่ใช้ซ้ำ: TopBar, Modal, RoomCard, ContactForm, CalcBox, PanoViewer ...
+├─ contexts/          AppContext (ข้อมูล + สถานะหน้าเว็บ), ToastContext
+├─ hooks/             useApp, useToast, useEscape
+├─ layouts/           MainLayout (แถบ DEMO + เมนู), ConsoleLayout (เมนูซ้ายของทีมงาน)
+├─ views/             หน้าจอแต่ละหน้า (เทียบกับ "pages" ใน React+Vite)
+│  └─ staff/          หน้าจอคอนโซลทีมงาน
+├─ services/
+│  ├─ data/           ข้อมูลตลาดจริง + ตรรกะจับคู่ (คัดลอกจากต้นฉบับ แก้แค่ตัวห่อ export)
+│  └─ storage.ts      อ่าน/เขียน localStorage ← จุดที่เปลี่ยนเป็น API ตอนใช้จริง
+├─ store/             สถานะกลาง: appStore, umStore (ลีด/ผู้ใช้/login), constants, types
+├─ styles/            globals.css (CSS เดิมของต้นฉบับ)
+└─ utils/             format, validation, project helpers, pano (ตัวดู 360° WebGL)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> ใช้ `src/views` แทน `src/pages` เพราะ Next.js สงวนชื่อ `pages` ไว้สำหรับ Pages Router
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## ก่อนใช้จริง
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- เปลี่ยน login เดโมเป็น Google Workspace SSO และตรวจสิทธิ์ที่เซิร์ฟเวอร์
+- แก้ `src/services/storage.ts` ให้เก็บลีดในฐานข้อมูลกลาง (Google Sheets + Apps Script หรือ Firebase) แทน localStorage
+- ต่อ LINE Messaging API เพื่อแจ้งเตือนเซลส์และส่งนัด/Unit Report ให้ลูกค้า
+- ใส่ห้องจริงจากทีม BU/AG แทนห้องจำลอง และใช้ภาพห้องจริง
